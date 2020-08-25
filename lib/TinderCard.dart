@@ -21,6 +21,9 @@ class _TinderCardState extends State<TinderCard>
   AnimationController _animationController;
 
   final double _card_width = 200;
+  final _percentageToExpand = 0.2;
+
+  /// 20% of the space to the bottom = expand pfp
 
   @override
   void initState() {
@@ -48,12 +51,13 @@ class _TinderCardState extends State<TinderCard>
   @override
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
+    var cardHeight = screenSize.height / 2;
 
     if (_dismissed) {
       // Get rid of the card after a swipe (only empty container left).
       return Container(
         width: 200,
-        height: screenSize.height / 2,
+        height: cardHeight,
       );
     }
 
@@ -65,7 +69,7 @@ class _TinderCardState extends State<TinderCard>
             origin: Offset(
               // where to rotate about
               _card_width / 2,
-              -screenSize.height / 4,
+              -cardHeight / 2,
             ),
             child: child,
             transform: Matrix4.identity()
@@ -75,7 +79,7 @@ class _TinderCardState extends State<TinderCard>
         },
         child: Container(
           width: double.infinity, // gesture area can take up whole screen width
-          height: screenSize.height / 2,
+          height: cardHeight,
           child: GestureDetector(
             dragStartBehavior: DragStartBehavior.start,
             behavior: HitTestBehavior.translucent,
@@ -94,8 +98,11 @@ class _TinderCardState extends State<TinderCard>
               _animationController.fling(velocity: _endVelocity);
             },
             onTapUp: (details) {
-              final y = details.localPosition.dy;
-              print(y);
+              // final y = details.localPosition.dy;
+              // if (y > (1 - _percentageToExpand) * cardHeight) {
+              //   print('EXPAND');
+              // }
+              Navigator.pushNamed(context, '/expandProfile');
             },
             child: Container(
               alignment: Alignment.center,
@@ -122,17 +129,21 @@ class _TinderCardState extends State<TinderCard>
   }
 
   /// This is the main card with the image.
-  Container get _card {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        image: DecorationImage(
-          image: NetworkImage(widget.imageURL),
-          fit: BoxFit.cover,
+  Widget get _card {
+    return Hero(
+      tag: 'pfp',
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          image: DecorationImage(
+            image: NetworkImage(widget.imageURL),
+            fit: BoxFit.cover,
+          ),
+          color: Colors.red,
         ),
+        width: _card_width,
+        child: _details(),
       ),
-      width: _card_width,
-      child: _details(),
     );
   }
 
