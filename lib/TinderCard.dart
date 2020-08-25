@@ -94,8 +94,53 @@ class _TinderCardState extends State<TinderCard>
                   }
                 },
                 child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    // color: widget.color,
+
+                    image: DecorationImage(
+                      image: NetworkImage(
+                        'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Ed_Sheeran-6886_%28cropped%29.jpg/220px-Ed_Sheeran-6886_%28cropped%29.jpg',
+                      ),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                   width: 200,
-                  color: widget.color,
+                  child: Container(
+                    alignment: Alignment.bottomCenter,
+                    margin: EdgeInsets.all(8),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Expanded(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Ed Sheeran',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Text(
+                                'Singer songwriter',
+                                style: TextStyle(
+                                  color: Colors.grey.shade300,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Icon(
+                          Icons.info,
+                          color: Colors.white,
+                        )
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ),
