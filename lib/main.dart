@@ -25,13 +25,16 @@ class MyApp extends StatelessWidget {
             Stack(
               children: [
                 Container(
-                  child: TinderCard(Colors.green),
+                  child: TinderCard(
+                      'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Ed_Sheeran-6886_%28cropped%29.jpg/220px-Ed_Sheeran-6886_%28cropped%29.jpg'),
                 ),
                 Container(
-                  child: TinderCard(Colors.blue),
+                  child: TinderCard(
+                      'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Ed_Sheeran-6886_%28cropped%29.jpg/220px-Ed_Sheeran-6886_%28cropped%29.jpg'),
                 ),
                 Container(
-                  child: TinderCard(Colors.red),
+                  child: TinderCard(
+                      'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Ed_Sheeran-6886_%28cropped%29.jpg/220px-Ed_Sheeran-6886_%28cropped%29.jpg'),
                 ),
               ],
             ),

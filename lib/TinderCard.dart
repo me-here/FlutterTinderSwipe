@@ -4,8 +4,8 @@ import 'package:vector_math/vector_math_64.dart' show Vector3, Matrix4;
 import 'package:visibility_detector/visibility_detector.dart';
 
 class TinderCard extends StatefulWidget {
-  Color color;
-  TinderCard(this.color);
+  final String imageURL;
+  TinderCard(this.imageURL);
 
   @override
   _TinderCardState createState() => _TinderCardState();
@@ -13,11 +13,14 @@ class TinderCard extends StatefulWidget {
 
 class _TinderCardState extends State<TinderCard>
     with SingleTickerProviderStateMixin {
-  double xOffset = 0.0;
-  double endVelocity = 0;
-  bool swipeRight = true;
-  bool dismissed = false;
+  double _xOffset = 0;
+  double _endVelocity = 0;
+  bool _swipeRight = true;
+  bool _dismissed = false;
+
   AnimationController _animationController;
+
+  final double _card_width = 200;
 
   @override
   void initState() {
@@ -35,117 +38,139 @@ class _TinderCardState extends State<TinderCard>
   }
 
   double getAnimationValue() {
-    if (endVelocity < 2) return 0;
-    return (swipeRight ? 1 : -1) * _animationController.value * 200;
+    // Trigger threshold.
+    if (_endVelocity < 2) return 0;
+
+    // How much to go add in either direction to position.
+    return (_swipeRight ? 1 : -1) * _animationController.value * 200;
   }
 
   @override
   Widget build(BuildContext context) {
-    if (dismissed) {
+    var screenSize = MediaQuery.of(context).size;
+
+    if (_dismissed) {
+      // Get rid of the card after a swipe (only empty container left).
       return Container(
         width: 200,
-        height: MediaQuery.of(context).size.height / 2,
+        height: screenSize.height / 2,
       );
     }
+
     return Container(
       child: AnimatedBuilder(
         animation: _animationController,
         builder: (context, child) {
           return Transform(
-            origin: Offset(100, -100),
+            origin: Offset(
+              // where to rotate about
+              _card_width / 2,
+              -screenSize.height / 4,
+            ),
             child: child,
             transform: Matrix4.identity()
-              ..rotateZ(xOffset / 800 * 0.5)
-              ..translate(xOffset + getAnimationValue(), 0),
+              ..rotateZ(_xOffset / 1600)
+              ..translate(_xOffset + getAnimationValue(), 0),
           );
         },
         child: Container(
-          width: double.infinity,
-          height: MediaQuery.of(context).size.height / 2,
+          width: double.infinity, // gesture area can take up whole screen width
+          height: screenSize.height / 2,
           child: GestureDetector(
             dragStartBehavior: DragStartBehavior.start,
             behavior: HitTestBehavior.translucent,
             onPanUpdate: (details) {
               setState(() {
-                xOffset += details.delta.dx;
+                _xOffset += details.delta.dx;
               });
             },
             onPanEnd: (details) {
               // Continue motion.
               setState(() {
-                swipeRight = details.velocity.pixelsPerSecond.dx > 0;
+                _swipeRight = details.velocity.pixelsPerSecond.dx > 0;
               });
-              endVelocity = details.velocity.pixelsPerSecond.distance /
-                  MediaQuery.of(context).size.width;
-              _animationController.fling(velocity: endVelocity);
+              _endVelocity =
+                  details.velocity.pixelsPerSecond.distance / screenSize.width;
+              _animationController.fling(velocity: _endVelocity);
             },
-            onPanStart: (details) {},
+            onTapUp: (details) {
+              final y = details.localPosition.dy;
+              print(y);
+            },
             child: Container(
               alignment: Alignment.center,
               child: VisibilityDetector(
-                key: Key('tinder card'),
+                key: Key('TCard'),
                 onVisibilityChanged: (info) {
                   if (info.visibleFraction == 0) {
                     setState(() {
-                      dismissed = true;
+                      // Get rid of it, no longer visible.
+                      _dismissed = true;
                     });
                   } else if (info.visibleFraction != 1) {
+                    // Spring back
                     print('VIS');
                   }
                 },
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    // color: widget.color,
-
-                    image: DecorationImage(
-                      image: NetworkImage(
-                        'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Ed_Sheeran-6886_%28cropped%29.jpg/220px-Ed_Sheeran-6886_%28cropped%29.jpg',
-                      ),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  width: 200,
-                  child: Container(
-                    alignment: Alignment.bottomCenter,
-                    margin: EdgeInsets.all(8),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Expanded(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Ed Sheeran',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              Text(
-                                'Singer songwriter',
-                                style: TextStyle(
-                                  color: Colors.grey.shade300,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Icon(
-                          Icons.info,
-                          color: Colors.white,
-                        )
-                      ],
-                    ),
-                  ),
-                ),
+                child: _card,
               ),
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  /// This is the main card with the image.
+  Container get _card {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        image: DecorationImage(
+          image: NetworkImage(widget.imageURL),
+          fit: BoxFit.cover,
+        ),
+      ),
+      width: _card_width,
+      child: _details(),
+    );
+  }
+
+  /// This contains the details at the bottom of the card of who the person is.
+  Widget _details() {
+    return Container(
+      alignment: Alignment.bottomCenter,
+      margin: EdgeInsets.all(8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Ed Sheeran',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  'Singer songwriter',
+                  style: TextStyle(
+                    color: Colors.grey.shade300,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Icon(
+            Icons.info,
+            color: Colors.white,
+          )
+        ],
       ),
     );
   }
