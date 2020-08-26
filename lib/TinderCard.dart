@@ -104,22 +104,25 @@ class _TinderCardState extends State<TinderCard>
               // }
               Navigator.pushNamed(context, '/expandProfile');
             },
-            child: Container(
-              alignment: Alignment.center,
-              child: VisibilityDetector(
-                key: Key('TCard'),
-                onVisibilityChanged: (info) {
-                  if (info.visibleFraction == 0) {
-                    setState(() {
-                      // Get rid of it, no longer visible.
-                      _dismissed = true;
-                    });
-                  } else if (info.visibleFraction != 1) {
-                    // Spring back
-                    print('VIS');
-                  }
-                },
-                child: _card,
+            child: Material(
+              type: MaterialType.transparency,
+              child: Container(
+                alignment: Alignment.center,
+                child: VisibilityDetector(
+                  key: Key('TCard'),
+                  onVisibilityChanged: (info) {
+                    if (info.visibleFraction == 0) {
+                      setState(() {
+                        // Get rid of it, no longer visible.
+                        _dismissed = true;
+                      });
+                    } else if (info.visibleFraction != 1) {
+                      // Spring back
+                      print('VIS');
+                    }
+                  },
+                  child: _card,
+                ),
               ),
             ),
           ),
@@ -130,20 +133,17 @@ class _TinderCardState extends State<TinderCard>
 
   /// This is the main card with the image.
   Widget get _card {
-    return Hero(
-      tag: 'pfp',
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          image: DecorationImage(
-            image: NetworkImage(widget.imageURL),
-            fit: BoxFit.cover,
-          ),
-          color: Colors.red,
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        image: DecorationImage(
+          image: NetworkImage(widget.imageURL),
+          fit: BoxFit.cover,
         ),
-        width: _card_width,
-        child: _details(),
+        color: Colors.red,
       ),
+      width: _card_width,
+      child: _details(),
     );
   }
 

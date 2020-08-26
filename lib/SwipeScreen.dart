@@ -13,21 +13,24 @@ class SwipeScreen extends StatelessWidget {
                 child: Text('Swipe left or right.'),
               ),
             ),
-            Stack(
-              children: [
-                Container(
-                  child: TinderCard(
-                      'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Ed_Sheeran-6886_%28cropped%29.jpg/220px-Ed_Sheeran-6886_%28cropped%29.jpg'),
-                ),
-                // Container(
-                //   child: TinderCard(
-                //       'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Ed_Sheeran-6886_%28cropped%29.jpg/220px-Ed_Sheeran-6886_%28cropped%29.jpg'),
-                // ),
-                // Container(
-                //   child: TinderCard(
-                //       'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Ed_Sheeran-6886_%28cropped%29.jpg/220px-Ed_Sheeran-6886_%28cropped%29.jpg'),
-                // ),
-              ],
+            Hero(
+              tag: 'pfp',
+              child: Stack(
+                children: [
+                  Container(
+                    child: TinderCard(
+                        'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Ed_Sheeran-6886_%28cropped%29.jpg/220px-Ed_Sheeran-6886_%28cropped%29.jpg'),
+                  ),
+                  Container(
+                    child: TinderCard(
+                        'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Ed_Sheeran-6886_%28cropped%29.jpg/220px-Ed_Sheeran-6886_%28cropped%29.jpg'),
+                  ),
+                  Container(
+                    child: TinderCard(
+                        'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Ed_Sheeran-6886_%28cropped%29.jpg/220px-Ed_Sheeran-6886_%28cropped%29.jpg'),
+                  ),
+                ],
+              ),
             ),
             Expanded(
               child: Container(
