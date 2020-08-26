@@ -20,10 +20,10 @@ class _TinderCardState extends State<TinderCard>
 
   AnimationController _animationController;
 
-  final double _card_width = 200;
-  final _percentageToExpand = 0.2;
+  final double _cardWidth = 200;
 
-  /// 20% of the space to the bottom = expand pfp
+  /// 20% of the space to the bottom => expand pfp
+  final _percentageToExpand = 0.2;
 
   @override
   void initState() {
@@ -68,7 +68,7 @@ class _TinderCardState extends State<TinderCard>
           return Transform(
             origin: Offset(
               // where to rotate about
-              _card_width / 2,
+              _cardWidth / 2,
               -cardHeight / 2,
             ),
             child: child,
@@ -82,7 +82,7 @@ class _TinderCardState extends State<TinderCard>
           height: cardHeight,
           child: GestureDetector(
             dragStartBehavior: DragStartBehavior.start,
-            behavior: HitTestBehavior.translucent,
+            behavior: HitTestBehavior.opaque,
             onPanUpdate: (details) {
               setState(() {
                 _xOffset += details.delta.dx;
@@ -96,13 +96,6 @@ class _TinderCardState extends State<TinderCard>
               _endVelocity =
                   details.velocity.pixelsPerSecond.distance / screenSize.width;
               _animationController.fling(velocity: _endVelocity);
-            },
-            onTapUp: (details) {
-              // final y = details.localPosition.dy;
-              // if (y > (1 - _percentageToExpand) * cardHeight) {
-              //   print('EXPAND');
-              // }
-              Navigator.pushNamed(context, '/expandProfile');
             },
             child: Material(
               type: MaterialType.transparency,
@@ -121,7 +114,7 @@ class _TinderCardState extends State<TinderCard>
                       print('VIS');
                     }
                   },
-                  child: _card,
+                  child: _card(cardHeight),
                 ),
               ),
             ),
@@ -132,18 +125,26 @@ class _TinderCardState extends State<TinderCard>
   }
 
   /// This is the main card with the image.
-  Widget get _card {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        image: DecorationImage(
-          image: NetworkImage(widget.imageURL),
-          fit: BoxFit.cover,
+  Widget _card(double cardHeight) {
+    return GestureDetector(
+      onTapUp: (details) {
+        final y = details.localPosition.dy;
+        if (y > (1 - _percentageToExpand) * cardHeight) {
+          Navigator.pushNamed(context, '/expandProfile');
+        }
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          image: DecorationImage(
+            image: NetworkImage(widget.imageURL),
+            fit: BoxFit.cover,
+          ),
+          color: Colors.red,
         ),
-        color: Colors.red,
+        width: _cardWidth,
+        child: _details(),
       ),
-      width: _card_width,
-      child: _details(),
     );
   }
 

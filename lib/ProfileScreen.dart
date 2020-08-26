@@ -17,8 +17,6 @@ Curabitur feugiat suscipit dui id cursus. Integer eleifend ligula et finibus gra
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  bool _isNavigating = false;
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -42,10 +40,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     alignment: Alignment.topLeft,
                     child: GestureDetector(
                       onTap: () {
-                        Navigator.pushNamed(context, '/');
-
-                        //Navigator.of(context).push('/');
-                        //Navigator.of(context).pop();
+                        Navigator.pop(context);
                       },
                       child: Icon(
                         Icons.chevron_left,
@@ -56,13 +51,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   )
                 ],
               ),
-              if (false)
-                Text(
-                  ProfileScreen.lorem,
-                  style: TextStyle(
-                    fontSize: 20,
-                  ),
+              Text(
+                ProfileScreen.lorem,
+                style: TextStyle(
+                  fontSize: 20,
                 ),
+              ),
             ],
           ),
         ),
